@@ -12,12 +12,10 @@ namespace TourGuide.Controllers;
 public class TourGuideController : ControllerBase
 {
     private readonly ITourGuideService _tourGuideService;
-    private readonly IRewardsService _rewardsService;
 
-    public TourGuideController(ITourGuideService tourGuideService, IRewardsService rewardsService)
+    public TourGuideController(ITourGuideService tourGuideService)
     {
         _tourGuideService = tourGuideService;
-        _rewardsService = rewardsService;
     }
 
     [HttpGet("getLocation")]
@@ -26,25 +24,13 @@ public class TourGuideController : ControllerBase
         var location = _tourGuideService.GetUserLocation(GetUser(userName));
         return Ok(location);
     }
-    
+
     [HttpGet("getNearbyAttractions")]
     public ActionResult<List<NearbyAttractionToUser>> GetNearbyAttractions([FromQuery] string userName)
     {
         var user = _tourGuideService.GetUser(userName);
-        var visitedLocation = _tourGuideService.GetUserLocation(user);
-        var attractions = _tourGuideService.GetNearByAttractions(visitedLocation);
-        var userLocation = visitedLocation.Location;
 
-        var dtos = new List<NearbyAttractionToUser>();
-
-        foreach (var attraction in attractions)
-        {
-            var distance = _rewardsService.GetDistance(attraction, userLocation);
-            var rewardPoints = _rewardsService.GetRewardPoints(attraction, user);
-
-            dtos.Add(new NearbyAttractionToUser(attraction.AttractionName, attraction.Longitude, attraction.Latitude,
-                userLocation.Longitude, userLocation.Latitude, distance, rewardPoints));
-        }
+        var dtos = _tourGuideService.GetNearByAttractionsToUser(user);
 
         return Ok(dtos);
     }

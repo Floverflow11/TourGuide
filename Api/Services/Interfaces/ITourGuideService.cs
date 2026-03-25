@@ -1,4 +1,5 @@
 ﻿using GpsUtil.Location;
+using TourGuide.Dtos;
 using TourGuide.Users;
 using TourGuide.Utilities;
 using TripPricer;
@@ -12,6 +13,7 @@ namespace TourGuide.Services.Interfaces
         void AddUser(User user);
         List<User> GetAllUsers();
         List<Attraction> GetNearByAttractions(VisitedLocation visitedLocation);
+        List<NearbyAttractionToUser> GetNearByAttractionsToUser(User user);
         List<Provider> GetTripDeals(User user);
         User GetUser(string userName);
         VisitedLocation GetUserLocation(User user);
