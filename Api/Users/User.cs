@@ -9,7 +9,6 @@ public class User
     public string UserName { get; }
     public string PhoneNumber { get; set; }
     public string EmailAddress { get; set; }
-
     public DateTime LatestLocationTimestamp { get; set; }
     public IReadOnlyList<VisitedLocation> VisitedLocations
     {
@@ -21,13 +20,23 @@ public class User
             }
         }
     }
-    public List<UserReward> UserRewards { get; } = new List<UserReward>();
+    public IReadOnlyList<UserReward> UserRewards
+    {
+        get
+        {
+            using (_lock.EnterScope())
+            {
+                return _userRewards.ToList();
+            }
+        }
+    }
     public UserPreferences UserPreferences { get; set; } = new UserPreferences();
     public List<Provider> TripDeals { get; set; } = new List<Provider>();
-    
+
     private readonly List<VisitedLocation> _visitedLocations = [];
+    private readonly List<UserReward> _userRewards = [];
     private readonly Lock _lock = new();
-    
+
     public User(Guid userId, string userName, string phoneNumber, string emailAddress)
     {
         UserId = userId;
@@ -54,9 +63,12 @@ public class User
 
     public void AddUserReward(UserReward userReward)
     {
-        if (!UserRewards.Exists(r => r.Attraction.AttractionName == userReward.Attraction.AttractionName))
+        using (_lock.EnterScope())
         {
-            UserRewards.Add(userReward);
+            if (!_userRewards.Exists(r => r.Attraction.AttractionName == userReward.Attraction.AttractionName))
+            {
+                _userRewards.Add(userReward);
+            }
         }
     }
 

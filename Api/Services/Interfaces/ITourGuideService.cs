@@ -17,7 +17,7 @@ namespace TourGuide.Services.Interfaces
         List<Provider> GetTripDeals(User user);
         User GetUser(string userName);
         VisitedLocation GetUserLocation(User user);
-        List<UserReward> GetUserRewards(User user);
+        IReadOnlyList<UserReward> GetUserRewards(User user);
         VisitedLocation TrackUserLocation(User user);
     }
 }

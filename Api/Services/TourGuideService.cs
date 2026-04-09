@@ -45,7 +45,7 @@ public class TourGuideService : ITourGuideService
         AddShutDownHook();
     }
 
-    public List<UserReward> GetUserRewards(User user)
+    public IReadOnlyList<UserReward> GetUserRewards(User user)
     {
         return user.UserRewards;
     }
